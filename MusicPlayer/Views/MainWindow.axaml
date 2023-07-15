@@ -1,0 +1,46 @@
+<Window x:Class="MusicPlayer.Views.MainWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MusicPlayer"
+        Title="Music Player" Width="800" Height="600"
+        x:DataType="local:MainWindowViewModel"
+        WindowStartupLocation="CenterScreen"
+        Background="#80000000"
+        TransparencyLevelHint="AcrylicBlur">
+
+    <Window.DataContext>
+        <local:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Songs" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Margin="0,10,0,0" Grid.Row="0"/>
+
+        <TextBlock Text="{Binding NormalTimer, StringFormat='{}{0:mm\\:ss}'}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="18" Margin="10,0,0,0" Grid.Row="2"/>
+
+        <Slider Minimum="0" Maximum="1" Value="{Binding NormalProgress, Mode=TwoWay}" Margin="5" Grid.Row="2" Width="600"/>
+
+        <TextBlock Text="{Binding MusicTimer, StringFormat='{}-{0:mm\\:ss}'}" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="18" Margin="0,0,10,0" Grid.Row="2"/>
+
+        <ListBox Grid.Row="1" ItemsSource="{Binding Songs}" SelectedItem="{Binding SelectedSong, Mode=TwoWay}" Background="Transparent">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Margin="5"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Background="Transparent" Margin="0,10,0,0">
+            <Button Content="Previous" Command="{Binding PreviousCommand}" Margin="5"/>
+            <Button Content="{Binding PlayButtonText, Mode=OneWay}" Command="{Binding PlayPauseCommand}" Margin="5"/>
+            <Button Content="Next" Command="{Binding NextCommand}" Margin="5"/>
+            <Button Content="Stop" Command="{Binding StopCommand}" Margin="5"/>
+        </StackPanel>
+    </Grid>
+</Window>

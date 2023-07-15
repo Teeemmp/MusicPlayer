@@ -212,7 +212,8 @@ namespace MusicPlayer
 
                     // Update the slider position without triggering the setter
                     normalProgress = currentTime.TotalSeconds / totalDuration.TotalSeconds;
-                    this.RaisePropertyChanged(nameof(NormalProgress)); // Manually raise the PropertyChanged event for NormalProgress
+                    this.RaisePropertyChanged(
+                        nameof(NormalProgress)); // Manually raise the PropertyChanged event for NormalProgress
                 }
                 else
                 {

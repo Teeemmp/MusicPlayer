@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using NAudio.Wave;
 using Avalonia.Controls;
 using System.Threading.Tasks;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 
@@ -85,17 +86,13 @@ namespace MusicPlayer.ViewModels
 
         public async Task SelectMusicFolderAsync()
         {
-            var folderDialog = new OpenFolderDialog
+            var result = await _mainWindow.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
+                AllowMultiple = false,
                 Title = "Select Music Folder"
-            };
+            });
 
-            var result = await folderDialog.ShowAsync(_mainWindow);
-
-            if (result != null)
-            {
-                LoadSongs(result);
-            }
+            LoadSongs(result[0].Path.AbsolutePath);
         }
 
         private void LoadSongs(string musicFolder)
@@ -103,9 +100,8 @@ namespace MusicPlayer.ViewModels
             if (_isPaused || _isPlaying)
             {
                 Stop();
-              
             }
-            
+
             Songs.Clear();
 
             _musicFolder = musicFolder;

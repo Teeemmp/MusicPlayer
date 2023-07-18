@@ -12,15 +12,18 @@ namespace MusicPlayer.Views
         public MainWindow()
         {
             InitializeComponent();
-            _viewModel = new MainViewModel();
+            _viewModel = new MainViewModel(this);
             DataContext = _viewModel;
-            Loaded+= OnLoaded;
+            Loaded += OnLoaded;
         }
 
         private void OnLoaded(object? sender, RoutedEventArgs e)
         {
-            const string musicFolder = @"C:\Users\ogie\Downloads\Music";
-           _viewModel.LoadSongs(musicFolder);
+        }
+
+        private async void LoadSongsButton_Click(object? sender, RoutedEventArgs e)
+        {
+            await _viewModel.SelectMusicFolderAsync();
         }
 
         private void InitializeComponent()

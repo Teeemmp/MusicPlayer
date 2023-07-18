@@ -22,11 +22,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Assets\next.png" />
-      <AvaloniaResource Include="Assets\next.png" />
-      <AvaloniaResource Include="Assets\previous.png" />
-      <AvaloniaResource Include="Assets\stop.png" />
-      <AvaloniaResource Include="Assets\play.png" />
-      <AvaloniaResource Include="Assets\pause.png" />
-    </ItemGroup>
+        <AvaloniaResource Include="Assets\next.png" />
+        <AvaloniaResource Include="Assets\previous.png" />
+        <AvaloniaResource Include="Assets\stop.png" />
+        <AvaloniaResource Include="Assets\play.png" />
+        <AvaloniaResource Include="Assets\pause.png" />
+  </ItemGroup>
 </Project>

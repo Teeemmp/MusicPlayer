@@ -7,6 +7,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using NAudio.Wave;
 using Avalonia.Controls;
 using System.Threading.Tasks;
+using Avalonia.Threading;
+using CommunityToolkit.Mvvm.Input;
 
 namespace MusicPlayer.ViewModels
 {
@@ -39,6 +41,14 @@ namespace MusicPlayer.ViewModels
                 if (!string.IsNullOrEmpty(SelectedSong))
                     Play(Path.Combine(_musicFolder, SelectedSong + ".mp3"));
             }
+
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                PreviousCommand.NotifyCanExecuteChanged();
+                NextCommand.NotifyCanExecuteChanged();
+                PlayPauseCommand.NotifyCanExecuteChanged();
+                StopCommand.NotifyCanExecuteChanged();
+            });
         }
 
         [ObservableProperty]
@@ -61,6 +71,9 @@ namespace MusicPlayer.ViewModels
 
         [ObservableProperty]
         private string _playButtonText = "Play";
+        
+        [ObservableProperty]
+        private string _playButtonUri = "avares://MusicPlayer/Assets/play.png";        
 
         private string _musicFolder = string.Empty;
         private WaveOutEvent? _waveOut;
@@ -85,6 +98,7 @@ namespace MusicPlayer.ViewModels
             }
         }
 
+        [RelayCommand(CanExecute = nameof(CanPlayPause))]
         public void PlayPause()
         {
             if (_isPlaying)
@@ -100,6 +114,8 @@ namespace MusicPlayer.ViewModels
             Play(Path.Combine(_musicFolder, $"{SelectedSong}.mp3"));
         }
 
+        private bool CanPlayPause() => !string.IsNullOrEmpty(SelectedSong);
+        
         private void Play(string song)
         {
             _waveOut?.Stop();
@@ -115,7 +131,8 @@ namespace MusicPlayer.ViewModels
             _waveOut.Play();
             _isPlaying = true;
             _isPaused = false;
-            PlayButtonText = "Pause";
+            
+            PlayButtonUri = "avares://MusicPlayer/Assets/pause.png";
         }
 
         private void Pause()
@@ -123,7 +140,7 @@ namespace MusicPlayer.ViewModels
             _waveOut?.Pause();
             _pausedPosition = _audioFileReader!.Position;
             _isPaused = true;
-            PlayButtonText = "Resume";
+            PlayButtonUri = "avares://MusicPlayer/Assets/play.png";
         }
 
         private void Resume()
@@ -131,9 +148,10 @@ namespace MusicPlayer.ViewModels
             _waveOut?.Play();
             _audioFileReader!.Position = _pausedPosition;
             _isPaused = false;
-            PlayButtonText = "Pause";
+            PlayButtonUri = "avares://MusicPlayer/Assets/pause.png";
         }
 
+        [RelayCommand(CanExecute = nameof(CanStop))]
         public void Stop()
         {
             _waveOut?.Stop();
@@ -145,6 +163,9 @@ namespace MusicPlayer.ViewModels
             PlayButtonText = "Play";
         }
 
+        private bool CanStop() => _isPlaying;
+        
+        [RelayCommand(CanExecute = nameof(CanPreviousOrNext))]
         public void Previous()
         {
             if (CurrentSongIndex == 0)
@@ -155,6 +176,7 @@ namespace MusicPlayer.ViewModels
             SelectedSong = Songs[CurrentSongIndex];
         }
 
+        [RelayCommand(CanExecute = nameof(CanPreviousOrNext))]
         public void Next()
         {
             if (CurrentSongIndex + 1 < Songs.Count)
@@ -165,6 +187,8 @@ namespace MusicPlayer.ViewModels
             SelectedSong = Songs[CurrentSongIndex];
         }
 
+        private bool CanPreviousOrNext() => Songs.Count > 0;
+        
         public void LoadSongs(string musicFolder)
         {
             _musicFolder = musicFolder;

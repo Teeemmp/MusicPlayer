@@ -1,13 +1,16 @@
-        <Window x:Class="MusicPlayer.Views.MainWindow"
+<Window x:Class="MusicPlayer.Views.MainWindow"
         xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:MusicPlayer.ViewModels"
+        xmlns:converters="clr-namespace:MusicPlayer.Converters"
         x:DataType="viewModels:MainViewModel"
         Title="Music Player" Width="800" Height="600"
         WindowStartupLocation="CenterScreen"
         Background="#80000000"
         TransparencyLevelHint="AcrylicBlur">
-
+    <Window.Resources>
+        <converters:BitmapAssetValueConverter x:Key="BitmapConverter" />
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -70,32 +73,35 @@
             VerticalAlignment="Top"
             Background="Transparent"
             Margin="0,10,0,0">
-            
+
             <Button
                 Margin="5"
                 Width="30"
                 Height="30"
-                Command="{Binding Previous}">
-                <Image Source="../Assets/previous.png" Stretch="Uniform"/>
+                Command="{Binding PreviousCommand}">
+                <Image Source="avares://MusicPlayer/Assets/previous.png" Stretch="Uniform" />
             </Button>
-            
-            <Button
-                Margin="5"
-                Content="{Binding PlayButtonText, Mode=OneWay}"
-                Command="{Binding PlayPause}" />
+
             <Button
                 Margin="5"
                 Width="30"
                 Height="30"
-                Command="{Binding Next}">
-                <Image Source="../Assets/next.png" Stretch="Uniform"/>
+                Command="{Binding PlayPauseCommand}">
+                <Image Source="{Binding PlayButtonUri, Converter={StaticResource BitmapConverter}}" Stretch="Uniform" />
             </Button>
             <Button
                 Margin="5"
                 Width="30"
                 Height="30"
-                Command="{Binding Stop}">
-                <Image Source="../Assets/stop.png" Stretch="Uniform"/>
+                Command="{Binding NextCommand}">
+                <Image Source="avares://MusicPlayer/Assets/next.png" Stretch="Uniform" />
+            </Button>
+            <Button
+                Margin="5"
+                Width="30"
+                Height="30"
+                Command="{Binding StopCommand}">
+                <Image Source="avares://MusicPlayer/Assets/stop.png" Stretch="Uniform" />
             </Button>
             <Button
                 Margin="5"

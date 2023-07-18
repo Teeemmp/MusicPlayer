@@ -25,7 +25,7 @@ namespace MusicPlayer.ViewModels
                 .Interval(TimeSpan.FromSeconds(1))
                 .Subscribe(_ => UpdateTimers());
         }
-        
+
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(NormalProgress))
@@ -71,9 +71,9 @@ namespace MusicPlayer.ViewModels
 
         [ObservableProperty]
         private string _playButtonText = "Play";
-        
+
         [ObservableProperty]
-        private string _playButtonUri = "avares://MusicPlayer/Assets/play.png";        
+        private string _playButtonUri = "avares://MusicPlayer/Assets/play.png";
 
         private string _musicFolder = string.Empty;
         private WaveOutEvent? _waveOut;
@@ -98,6 +98,26 @@ namespace MusicPlayer.ViewModels
             }
         }
 
+        private void LoadSongs(string musicFolder)
+        {
+            if (_isPaused || _isPlaying)
+            {
+                Stop();
+              
+            }
+            
+            Songs.Clear();
+
+            _musicFolder = musicFolder;
+            var songFiles = Directory.GetFiles(musicFolder, "*.mp3");
+
+            foreach (var songFile in songFiles)
+            {
+                var songTitle = Path.GetFileNameWithoutExtension(songFile);
+                Songs.Add(songTitle);
+            }
+        }
+
         [RelayCommand(CanExecute = nameof(CanPlayPause))]
         public void PlayPause()
         {
@@ -115,7 +135,7 @@ namespace MusicPlayer.ViewModels
         }
 
         private bool CanPlayPause() => !string.IsNullOrEmpty(SelectedSong);
-        
+
         private void Play(string song)
         {
             _waveOut?.Stop();
@@ -131,7 +151,7 @@ namespace MusicPlayer.ViewModels
             _waveOut.Play();
             _isPlaying = true;
             _isPaused = false;
-            
+
             PlayButtonUri = "avares://MusicPlayer/Assets/pause.png";
         }
 
@@ -160,11 +180,14 @@ namespace MusicPlayer.ViewModels
 
             _isPlaying = false;
             _isPaused = false;
-            PlayButtonText = "Play";
+            NormalProgress = 0;
+            MusicTimer = TimeSpan.Zero;
+            NormalTimer = TimeSpan.Zero;
+            PlayButtonUri = "avares://MusicPlayer/Assets/play.png";
         }
 
         private bool CanStop() => _isPlaying;
-        
+
         [RelayCommand(CanExecute = nameof(CanPreviousOrNext))]
         public void Previous()
         {
@@ -188,18 +211,6 @@ namespace MusicPlayer.ViewModels
         }
 
         private bool CanPreviousOrNext() => Songs.Count > 0;
-        
-        public void LoadSongs(string musicFolder)
-        {
-            _musicFolder = musicFolder;
-            var songFiles = Directory.GetFiles(musicFolder, "*.mp3");
-
-            foreach (var songFile in songFiles)
-            {
-                var songTitle = Path.GetFileNameWithoutExtension(songFile);
-                Songs.Add(songTitle);
-            }
-        }
 
         private void UpdateTimers()
         {
